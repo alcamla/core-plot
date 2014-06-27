@@ -119,7 +119,7 @@
     y.titleOffset = 32.0;
 
     // Create some function plots
-    for ( NSUInteger plotNum = 0; plotNum < 2; plotNum++ ) {
+    for ( NSUInteger plotNum = 0; plotNum <= 2; plotNum++ ) {
         NSString *titleString          = nil;
         CPTDataSourceFunction function = NULL;
         CPTDataSourceBlock block       = nil;
@@ -134,7 +134,7 @@
 
             case 1:
                 titleString = @"y = cos(x)";
-                block       = ^(double x) {
+                block       = ^double (double x) {
                     return cos(x);
                 };
                 lineColor = [CPTColor greenColor];
