@@ -5,9 +5,9 @@
 
 +(instancetype)numberWithCGFloat:(CGFloat)number;
 
--(CGFloat)cgFloatValue;
+@property (NS_NONATOMIC_IOSONLY, readonly) CGFloat cgFloatValue;
 -(instancetype)initWithCGFloat:(CGFloat)number;
 
--(NSDecimalNumber *)decimalNumber;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDecimalNumber *decimalNumber;
 
 @end
