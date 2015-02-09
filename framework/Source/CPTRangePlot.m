@@ -901,13 +901,14 @@ typedef struct CGPointError CGPointError;
 
 +(BOOL)needsDisplayForKey:(NSString *)aKey
 {
-    static NSSet *keys = nil;
+    static NSSet *keys               = nil;
+    static dispatch_once_t onceToken = 0;
 
-    if ( !keys ) {
+    dispatch_once(&onceToken, ^{
         keys = [NSSet setWithArray:@[@"barWidth",
                                      @"gapHeight",
                                      @"gapWidth"]];
-    }
+    });
 
     if ( [keys containsObject:aKey] ) {
         return YES;
@@ -957,6 +958,30 @@ typedef struct CGPointError CGPointError;
             break;
     }
     return result;
+}
+
+-(CPTCoordinate)coordinateForFieldIdentifier:(NSUInteger)field
+{
+    CPTCoordinate coordinate = CPTCoordinateNone;
+
+    switch ( field ) {
+        case CPTRangePlotFieldX:
+        case CPTRangePlotFieldLeft:
+        case CPTRangePlotFieldRight:
+            coordinate = CPTCoordinateX;
+            break;
+
+        case CPTRangePlotFieldY:
+        case CPTRangePlotFieldHigh:
+        case CPTRangePlotFieldLow:
+            coordinate = CPTCoordinateY;
+            break;
+
+        default:
+            break;
+    }
+
+    return coordinate;
 }
 
 /// @endcond

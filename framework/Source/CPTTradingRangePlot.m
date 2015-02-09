@@ -97,13 +97,13 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 @synthesize lineStyle;
 
 /** @property CPTLineStyle *increaseLineStyle
- *  @brief The line style used to outline candlestick symbols when close >= open.
+ *  @brief The line style used to outline candlestick symbols or draw OHLC symbols when close >= open.
  *  If @nil, will use @ref lineStyle instead.
  **/
 @synthesize increaseLineStyle;
 
 /** @property CPTLineStyle *decreaseLineStyle
- *  @brief The line style used to outline candlestick symbols when close < open.
+ *  @brief The line style used to outline candlestick symbols or draw OHLC symbols when close < open.
  *  If @nil, will use @ref lineStyle instead.
  **/
 @synthesize decreaseLineStyle;
@@ -922,6 +922,19 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 {
     CPTLineStyle *theLineStyle = [self lineStyleForIndex:idx];
 
+    if ( !isnan(openValue) && !isnan(closeValue) ) {
+        if ( openValue < closeValue ) {
+            if ( [[self increaseLineStyleForIndex:idx] isKindOfClass:[CPTLineStyle class]] ) {
+                theLineStyle = [self increaseLineStyleForIndex:idx];
+            }
+        }
+        else if ( openValue > closeValue ) {
+            if ( [[self decreaseLineStyleForIndex:idx] isKindOfClass:[CPTLineStyle class]] ) {
+                theLineStyle = [self decreaseLineStyleForIndex:idx];
+            }
+        }
+    }
+
     if ( [theLineStyle isKindOfClass:[CPTLineStyle class]] ) {
         CGFloat theStickLength = self.stickLength;
         CGMutablePathRef path  = CGPathCreateMutable();
@@ -1075,13 +1088,14 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 +(BOOL)needsDisplayForKey:(NSString *)aKey
 {
-    static NSSet *keys = nil;
+    static NSSet *keys               = nil;
+    static dispatch_once_t onceToken = 0;
 
-    if ( !keys ) {
+    dispatch_once(&onceToken, ^{
         keys = [NSSet setWithArray:@[@"barWidth",
                                      @"stickLength",
                                      @"barCornerRadius"]];
-    }
+    });
 
     if ( [keys containsObject:aKey] ) {
         return YES;
@@ -1133,6 +1147,29 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
             break;
     }
     return result;
+}
+
+-(CPTCoordinate)coordinateForFieldIdentifier:(NSUInteger)field
+{
+    CPTCoordinate coordinate = CPTCoordinateNone;
+
+    switch ( field ) {
+        case CPTTradingRangePlotFieldX:
+            coordinate = CPTCoordinateX;
+            break;
+
+        case CPTTradingRangePlotFieldOpen:
+        case CPTTradingRangePlotFieldLow:
+        case CPTTradingRangePlotFieldHigh:
+        case CPTTradingRangePlotFieldClose:
+            coordinate = CPTCoordinateY;
+            break;
+
+        default:
+            break;
+    }
+
+    return coordinate;
 }
 
 /// @endcond
