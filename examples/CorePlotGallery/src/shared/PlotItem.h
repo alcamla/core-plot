@@ -6,7 +6,7 @@
 #import <Foundation/Foundation.h>
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-#import "CorePlot-CocoaTouch.h"
+#import <CorePlot_iOS/CorePlot.h>
 #import <UIKit/UIKit.h>
 
 typedef CGRect CGNSRect;

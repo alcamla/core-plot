@@ -89,10 +89,10 @@
 
     // Setup plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(self.minimumValueForXAxis)
-                                                    length:CPTDecimalFromDouble(ceil( (self.maximumValueForXAxis - self.minimumValueForXAxis) / self.majorIntervalLengthForX ) * self.majorIntervalLengthForX)];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(self.minimumValueForYAxis)
-                                                    length:CPTDecimalFromDouble(ceil( (self.maximumValueForYAxis - self.minimumValueForYAxis) / self.majorIntervalLengthForY ) * self.majorIntervalLengthForY)];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:@(self.minimumValueForXAxis)
+                                                    length:@(ceil( (self.maximumValueForXAxis - self.minimumValueForXAxis) / self.majorIntervalLengthForX ) * self.majorIntervalLengthForX)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:@(self.minimumValueForYAxis)
+                                                    length:@(ceil( (self.maximumValueForYAxis - self.minimumValueForYAxis) / self.majorIntervalLengthForY ) * self.majorIntervalLengthForY)];
 
     // this allows the plot to respond to mouse events
     [plotSpace setDelegate:self];
@@ -102,13 +102,13 @@
 
     CPTXYAxis *x = axisSet.xAxis;
     x.minorTicksPerInterval = 9;
-    x.majorIntervalLength   = CPTDecimalFromDouble(self.majorIntervalLengthForX);
+    x.majorIntervalLength   = @(self.majorIntervalLengthForX);
     x.labelOffset           = 5.0;
     x.axisConstraints       = [CPTConstraints constraintWithLowerOffset:0.0];
 
     CPTXYAxis *y = axisSet.yAxis;
     y.minorTicksPerInterval = 9;
-    y.majorIntervalLength   = CPTDecimalFromDouble(self.majorIntervalLengthForY);
+    y.majorIntervalLength   = @(self.majorIntervalLengthForY);
     y.labelOffset           = 5.0;
     y.axisConstraints       = [CPTConstraints constraintWithLowerOffset:0.0];
 
@@ -251,10 +251,10 @@
     self.maximumValueForYAxis = MAX(start[CPTCoordinateY], end[CPTCoordinateY]);
 
     // now adjust the plot range and axes
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(self.minimumValueForXAxis)
-                                                    length:CPTDecimalFromDouble(self.maximumValueForXAxis - self.minimumValueForXAxis)];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(self.minimumValueForYAxis)
-                                                    length:CPTDecimalFromDouble(self.maximumValueForYAxis - self.minimumValueForYAxis)];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:@(self.minimumValueForXAxis)
+                                                    length:@(self.maximumValueForXAxis - self.minimumValueForXAxis)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:@(self.minimumValueForYAxis)
+                                                    length:@(self.maximumValueForYAxis - self.minimumValueForYAxis)];
 
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)self.graph.axisSet;
     axisSet.xAxis.labelingPolicy = CPTAxisLabelingPolicyAutomatic;
@@ -296,11 +296,10 @@
     // now adjust the plot range and axes
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
 
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(minX)
-                                                    length:CPTDecimalFromDouble(ceil( (maxX - minX) / intervalX ) * intervalX)];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(minY)
-                                                    length:CPTDecimalFromDouble(ceil( (maxY - minY) / intervalY ) * intervalY)];
-
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:@(minX)
+                                                    length:@(ceil( (maxX - minX) / intervalX ) * intervalX)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:@(minY)
+                                                    length:@(ceil( (maxY - minY) / intervalY ) * intervalY)];
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)self.graph.axisSet;
     axisSet.xAxis.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     axisSet.yAxis.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;

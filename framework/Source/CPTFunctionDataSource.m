@@ -267,8 +267,8 @@ static void *const CPTFunctionDataSourceKVOContext = (void *)&CPTFunctionDataSou
                 NSUInteger numPoints = (NSUInteger)lrint( ( ceil( (cachedRange.minLimitDouble - minLimit) / step ) ) );
 
                 NSDecimal offset = CPTDecimalFromDouble(step * numPoints);
-                cachedRange.location = CPTDecimalSubtract(cachedRange.location, offset);
-                cachedRange.length   = CPTDecimalAdd(cachedRange.length, offset);
+                cachedRange.locationDecimal = CPTDecimalSubtract(cachedRange.locationDecimal, offset);
+                cachedRange.lengthDecimal   = CPTDecimalAdd(cachedRange.lengthDecimal, offset);
 
                 self.dataCount += numPoints;
 
@@ -280,7 +280,7 @@ static void *const CPTFunctionDataSourceKVOContext = (void *)&CPTFunctionDataSou
                 NSUInteger numPoints = (NSUInteger)lrint( ceil( (maxLimit - cachedRange.maxLimitDouble) / step ) );
 
                 NSDecimal offset = CPTDecimalFromDouble(step * numPoints);
-                cachedRange.length = CPTDecimalAdd(cachedRange.length, offset);
+                cachedRange.lengthDecimal = CPTDecimalAdd(cachedRange.lengthDecimal, offset);
 
                 self.dataCount += numPoints;
 
@@ -293,8 +293,8 @@ static void *const CPTFunctionDataSourceKVOContext = (void *)&CPTFunctionDataSou
                 NSUInteger numPoints = (NSUInteger)lrint( ceil( (cachedRange.maxLimitDouble - maxLimit) / step ) );
 
                 NSDecimal offset = CPTDecimalFromDouble(step * numPoints);
-                cachedRange.location = CPTDecimalSubtract(cachedRange.location, offset);
-                cachedRange.length   = CPTDecimalAdd(cachedRange.length, offset);
+                cachedRange.locationDecimal = CPTDecimalSubtract(cachedRange.locationDecimal, offset);
+                cachedRange.lengthDecimal   = CPTDecimalAdd(cachedRange.lengthDecimal, offset);
 
                 self.dataCount += numPoints;
 
@@ -306,7 +306,7 @@ static void *const CPTFunctionDataSourceKVOContext = (void *)&CPTFunctionDataSou
                 NSUInteger numPoints = (NSUInteger)lrint( ceil( (minLimit - cachedRange.minLimitDouble) / step ) );
 
                 NSDecimal offset = CPTDecimalFromDouble(step * numPoints);
-                cachedRange.length = CPTDecimalAdd(cachedRange.length, offset);
+                cachedRange.lengthDecimal = CPTDecimalAdd(cachedRange.lengthDecimal, offset);
 
                 self.dataCount += numPoints;
 

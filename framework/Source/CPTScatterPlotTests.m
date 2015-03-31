@@ -1,5 +1,9 @@
 #import "CPTScatterPlotTests.h"
 
+#import "CPTPlotRange.h"
+#import "CPTScatterPlot.h"
+#import "CPTXYPlotSpace.h"
+
 @interface CPTScatterPlot(Testing)
 
 -(void)calculatePointsToDraw:(BOOL *)pointDrawFlags forPlotSpace:(CPTXYPlotSpace *)xyPlotSpace includeVisiblePointsOnly:(BOOL)visibleOnly numberOfPoints:(NSUInteger)dataCount;
@@ -25,8 +29,8 @@
     [self.plot setYValues:yValues];
     self.plot.cachePrecision = CPTPlotCachePrecisionDouble;
 
-    CPTPlotRange *xPlotRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromInteger(0) length:CPTDecimalFromInteger(1)];
-    CPTPlotRange *yPlotRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromInteger(0) length:CPTDecimalFromInteger(1)];
+    CPTPlotRange *xPlotRange = [CPTPlotRange plotRangeWithLocation:@0.0 length:@1.0];
+    CPTPlotRange *yPlotRange = [CPTPlotRange plotRangeWithLocation:@0.0 length:@1.0];
     self.plotSpace        = [[CPTXYPlotSpace alloc] init];
     self.plotSpace.xRange = xPlotRange;
     self.plotSpace.yRange = yPlotRange;

@@ -74,9 +74,15 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
 
 /** @property CPTScatterPlotInterpolation interpolation
  *  @brief The interpolation algorithm used for lines between data points.
- *  Default is #CPTScatterPlotInterpolationLinear
+ *  Default is #CPTScatterPlotInterpolationLinear.
  **/
 @synthesize interpolation;
+
+/** @property CPTScatterPlotHistogramOption histogramOption
+ *  @brief The drawing style for a histogram plot line (@ref interpolation = #CPTScatterPlotInterpolationHistogram).
+ *  Default is #CPTScatterPlotHistogramNormal.
+ **/
+@synthesize histogramOption;
 
 /** @property CPTLineStyle *dataLineStyle
  *  @brief The line style for the data line.
@@ -102,19 +108,23 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
  **/
 @synthesize areaFill2;
 
-/** @property NSDecimal areaBaseValue
+/** @property NSNumber *areaBaseValue
  *  @brief The Y coordinate of the straight boundary of the area fill.
  *  If not a number, the area is not filled.
  *
  *  Typically set to the minimum value of the Y range, but it can be any value that gives the desired appearance.
+ *
+ *  @ingroup plotBindingsScatterPlot
  **/
 @synthesize areaBaseValue;
 
-/** @property NSDecimal areaBaseValue2
+/** @property NSNumber *areaBaseValue2
  *  @brief The Y coordinate of the straight boundary of the secondary area fill.
  *  If not a number, the area is not filled.
  *
  *  Typically set to the maximum value of the Y range, but it can be any value that gives the desired appearance.
+ *
+ *  @ingroup plotBindingsScatterPlot
  **/
 @synthesize areaBaseValue2;
 
@@ -202,6 +212,7 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
  *  - @ref plotLineMarginForHitDetection = @num{4.0}
  *  - @ref allowSimultaneousSymbolAndPlotSelection = NO
  *  - @ref interpolation = #CPTScatterPlotInterpolationLinear
+ *  - @ref histogramOption = #CPTScatterPlotHistogramNormal
  *  - @ref labelField = #CPTScatterPlotFieldY
  *
  *  @param newFrame The frame rectangle.
@@ -214,11 +225,12 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
         plotSymbol                      = nil;
         areaFill                        = nil;
         areaFill2                       = nil;
-        areaBaseValue                   = [[NSDecimalNumber notANumber] decimalValue];
-        areaBaseValue2                  = [[NSDecimalNumber notANumber] decimalValue];
+        areaBaseValue                   = @(NAN);
+        areaBaseValue2                  = @(NAN);
         plotSymbolMarginForHitDetection = CPTFloat(0.0);
         plotLineMarginForHitDetection   = CPTFloat(4.0);
         interpolation                   = CPTScatterPlotInterpolationLinear;
+        histogramOption                 = CPTScatterPlotHistogramNormal;
         pointingDeviceDownIndex         = NSNotFound;
         pointingDeviceDownOnLine        = NO;
         mutableAreaFillBands            = nil;
@@ -246,6 +258,7 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
         plotLineMarginForHitDetection           = theLayer->plotLineMarginForHitDetection;
         allowSimultaneousSymbolAndPlotSelection = theLayer->allowSimultaneousSymbolAndPlotSelection;
         interpolation                           = theLayer->interpolation;
+        histogramOption                         = theLayer->histogramOption;
         mutableAreaFillBands                    = theLayer->mutableAreaFillBands;
         pointingDeviceDownIndex                 = NSNotFound;
         pointingDeviceDownOnLine                = NO;
@@ -265,13 +278,14 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
     [super encodeWithCoder:coder];
 
     [coder encodeInteger:self.interpolation forKey:@"CPTScatterPlot.interpolation"];
+    [coder encodeInteger:self.histogramOption forKey:@"CPTScatterPlot.histogramOption"];
     [coder encodeObject:self.dataLineStyle forKey:@"CPTScatterPlot.dataLineStyle"];
     [coder encodeObject:self.plotSymbol forKey:@"CPTScatterPlot.plotSymbol"];
     [coder encodeObject:self.areaFill forKey:@"CPTScatterPlot.areaFill"];
     [coder encodeObject:self.areaFill2 forKey:@"CPTScatterPlot.areaFill2"];
     [coder encodeObject:self.mutableAreaFillBands forKey:@"CPTScatterPlot.mutableAreaFillBands"];
-    [coder encodeDecimal:self.areaBaseValue forKey:@"CPTScatterPlot.areaBaseValue"];
-    [coder encodeDecimal:self.areaBaseValue2 forKey:@"CPTScatterPlot.areaBaseValue2"];
+    [coder encodeObject:self.areaBaseValue forKey:@"CPTScatterPlot.areaBaseValue"];
+    [coder encodeObject:self.areaBaseValue2 forKey:@"CPTScatterPlot.areaBaseValue2"];
     [coder encodeCGFloat:self.plotSymbolMarginForHitDetection forKey:@"CPTScatterPlot.plotSymbolMarginForHitDetection"];
     [coder encodeCGFloat:self.plotLineMarginForHitDetection forKey:@"CPTScatterPlot.plotLineMarginForHitDetection"];
     [coder encodeBool:self.allowSimultaneousSymbolAndPlotSelection forKey:@"CPTScatterPlot.allowSimultaneousSymbolAndPlotSelection"];
@@ -285,13 +299,14 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
 {
     if ( (self = [super initWithCoder:coder]) ) {
         interpolation                           = (CPTScatterPlotInterpolation)[coder decodeIntegerForKey : @"CPTScatterPlot.interpolation"];
+        histogramOption                         = (CPTScatterPlotHistogramOption)[coder decodeIntegerForKey : @"CPTScatterPlot.histogramOption"];
         dataLineStyle                           = [[coder decodeObjectForKey:@"CPTScatterPlot.dataLineStyle"] copy];
         plotSymbol                              = [[coder decodeObjectForKey:@"CPTScatterPlot.plotSymbol"] copy];
         areaFill                                = [[coder decodeObjectForKey:@"CPTScatterPlot.areaFill"] copy];
         areaFill2                               = [[coder decodeObjectForKey:@"CPTScatterPlot.areaFill2"] copy];
         mutableAreaFillBands                    = [[coder decodeObjectForKey:@"CPTScatterPlot.mutableAreaFillBands"] mutableCopy];
-        areaBaseValue                           = [coder decodeDecimalForKey:@"CPTScatterPlot.areaBaseValue"];
-        areaBaseValue2                          = [coder decodeDecimalForKey:@"CPTScatterPlot.areaBaseValue2"];
+        areaBaseValue                           = [coder decodeObjectForKey:@"CPTScatterPlot.areaBaseValue"];
+        areaBaseValue2                          = [coder decodeObjectForKey:@"CPTScatterPlot.areaBaseValue2"];
         plotSymbolMarginForHitDetection         = [coder decodeCGFloatForKey:@"CPTScatterPlot.plotSymbolMarginForHitDetection"];
         plotLineMarginForHitDetection           = [coder decodeCGFloatForKey:@"CPTScatterPlot.plotLineMarginForHitDetection"];
         allowSimultaneousSymbolAndPlotSelection = [coder decodeBoolForKey:@"CPTScatterPlot.allowSimultaneousSymbolAndPlotSelection"];
@@ -775,12 +790,12 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
         for ( NSUInteger i = 0; i < 2; i++ ) {
             switch ( i ) {
                 case 0:
-                    theAreaBaseValue = self.areaBaseValue;
+                    theAreaBaseValue = self.areaBaseValue.decimalValue;
                     theFill          = self.areaFill;
                     break;
 
                 case 1:
-                    theAreaBaseValue = self.areaBaseValue2;
+                    theAreaBaseValue = self.areaBaseValue2.decimalValue;
                     theFill          = self.areaFill2;
                     break;
 
@@ -821,10 +836,10 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
 
                             CPTPlotRange *bandRange = band.range;
 
-                            plotPoint[CPTCoordinateX] = bandRange.minLimit;
+                            plotPoint[CPTCoordinateX] = bandRange.minLimitDecimal;
                             CGPoint minPoint = [self convertPoint:[thePlotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2] fromLayer:thePlotArea];
 
-                            plotPoint[CPTCoordinateX] = bandRange.maxLimit;
+                            plotPoint[CPTCoordinateX] = bandRange.maxLimitDecimal;
                             CGPoint maxPoint = [self convertPoint:[thePlotSpace plotAreaViewPointForPlotPoint:plotPoint numberOfCoordinates:2] fromLayer:thePlotArea];
 
                             if ( pixelAlign ) {
@@ -954,8 +969,12 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
                     case CPTScatterPlotInterpolationHistogram:
                     {
                         CGFloat x = (lastPoint.x + viewPoint.x) / CPTFloat(2.0);
-                        CGPathAddLineToPoint(dataLinePath, NULL, x, lastPoint.y);
-                        CGPathAddLineToPoint(dataLinePath, NULL, x, viewPoint.y);
+                        if ( CPTScatterPlotHistogramSkipFirst != self.histogramOption ) {
+                            CGPathAddLineToPoint(dataLinePath, NULL, x, lastPoint.y);
+                        }
+                        if ( CPTScatterPlotHistogramSkipSecond != self.histogramOption ) {
+                            CGPathAddLineToPoint(dataLinePath, NULL, x, viewPoint.y);
+                        }
                         CGPathAddLineToPoint(dataLinePath, NULL, viewPoint.x, viewPoint.y);
                     }
                     break;
@@ -1224,7 +1243,7 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
                     CGContextAddPath(context, swatchPath);
                     CGContextClip(context);
 
-                    if ( CPTDecimalGreaterThanOrEqualTo(self.areaBaseValue2, self.areaBaseValue) ) {
+                    if ( CPTDecimalGreaterThanOrEqualTo(self.areaBaseValue2.decimalValue, self.areaBaseValue.decimalValue) ) {
                         [fill1 fillRect:CPTRectMake( CGRectGetMinX(rect), CGRectGetMinY(rect), rect.size.width, rect.size.height / CPTFloat(2.0) ) inContext:context];
                         [fill2 fillRect:CPTRectMake( CGRectGetMinX(rect), CGRectGetMidY(rect), rect.size.width, rect.size.height / CPTFloat(2.0) ) inContext:context];
                     }
@@ -1270,6 +1289,31 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
     free(drawPointFlags);
 
     return dataLinePath;
+}
+
+/// @endcond
+
+#pragma mark -
+#pragma mark Animation
+
+/// @cond
+
++(BOOL)needsDisplayForKey:(NSString *)aKey
+{
+    static NSSet *keys = nil;
+    static dispatch_once_t onceToken;
+
+    dispatch_once(&onceToken, ^{
+        keys = [NSSet setWithArray:@[@"areaBaseValue",
+                                     @"areaBaseValue2"]];
+    });
+
+    if ( [keys containsObject:aKey] ) {
+        return YES;
+    }
+    else {
+        return [super needsDisplayForKey:aKey];
+    }
 }
 
 /// @endcond
@@ -1344,7 +1388,7 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
     BOOL positiveDirection = YES;
     CPTPlotRange *yRange   = [self.plotSpace plotRangeForCoordinate:CPTCoordinateY];
 
-    if ( CPTDecimalLessThan( yRange.length, CPTDecimalFromInteger(0) ) ) {
+    if ( CPTDecimalLessThan( yRange.lengthDecimal, CPTDecimalFromInteger(0) ) ) {
         positiveDirection = !positiveDirection;
     }
 
@@ -1719,6 +1763,14 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
     }
 }
 
+-(void)setHistogramOption:(CPTScatterPlotHistogramOption)newHistogramOption
+{
+    if ( newHistogramOption != histogramOption ) {
+        histogramOption = newHistogramOption;
+        [self setNeedsDisplay];
+    }
+}
+
 -(void)setPlotSymbol:(CPTPlotSymbol *)aSymbol
 {
     if ( aSymbol != plotSymbol ) {
@@ -1760,24 +1812,22 @@ NSString *const CPTScatterPlotBindingPlotSymbols = @"plotSymbols"; ///< Plot sym
     return [self.mutableAreaFillBands copy];
 }
 
--(void)setAreaBaseValue:(NSDecimal)newAreaBaseValue
+-(void)setAreaBaseValue:(NSNumber *)newAreaBaseValue
 {
-    if ( CPTDecimalEquals(areaBaseValue, newAreaBaseValue) ) {
-        return;
+    if ( ![newAreaBaseValue isEqualToNumber:areaBaseValue] ) {
+        areaBaseValue = newAreaBaseValue;
+        [self setNeedsDisplay];
+        [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
     }
-    areaBaseValue = newAreaBaseValue;
-    [self setNeedsDisplay];
-    [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 }
 
--(void)setAreaBaseValue2:(NSDecimal)newAreaBaseValue
+-(void)setAreaBaseValue2:(NSNumber *)newAreaBaseValue
 {
-    if ( CPTDecimalEquals(areaBaseValue2, newAreaBaseValue) ) {
-        return;
+    if ( ![newAreaBaseValue isEqualToNumber:areaBaseValue2] ) {
+        areaBaseValue2 = newAreaBaseValue;
+        [self setNeedsDisplay];
+        [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
     }
-    areaBaseValue2 = newAreaBaseValue;
-    [self setNeedsDisplay];
-    [[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 }
 
 -(void)setXValues:(NSArray *)newValues

@@ -46,8 +46,8 @@
 
     // Setup plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromUnsignedInteger(0) length:CPTDecimalFromUnsignedInteger(100)];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(5.5) length:CPTDecimalFromInteger(-6)];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:@0.0 length:@100.0];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:@5.5 length:@(-6.0)];
 
     // Line styles
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
@@ -65,10 +65,10 @@
     CPTLineCapType lineCapType = CPTLineCapTypeNone;
     while ( lineCapType < CPTLineCapTypeCustom ) {
         CPTXYAxis *axis = [[CPTXYAxis alloc] init];
-        axis.plotSpace                   = graph.defaultPlotSpace;
-        axis.labelingPolicy              = CPTAxisLabelingPolicyNone;
-        axis.orthogonalCoordinateDecimal = CPTDecimalFromUnsignedInteger(lineCapType / 2);
-        axis.axisLineStyle               = axisLineStyle;
+        axis.plotSpace          = graph.defaultPlotSpace;
+        axis.labelingPolicy     = CPTAxisLabelingPolicyNone;
+        axis.orthogonalPosition = @(lineCapType / 2);
+        axis.axisLineStyle      = axisLineStyle;
 
         lineCap.lineCapType = lineCapType++;
         axis.axisLineCapMin = lineCap;
